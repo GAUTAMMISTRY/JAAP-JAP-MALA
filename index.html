@@ -1,59 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Jaap Mala Jap</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Advanced Tailwind Click App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <script>
-    let count = 0;
+<style>
+  /* Celebration confetti */
+  .confetti {
+    position: fixed;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    animation: fall 3s linear forwards;
+  }
 
-    function incrementCount() {
-      count++;
-      document.getElementById("countText").innerText = count;
+  @keyframes fall {
+    to {
+      transform: translateY(110vh) rotate(360deg);
+      opacity: 0;
     }
+  }
 
-    function resetCount() {
-      count = 0;
-      document.getElementById("countText").innerText = count;
-    }
-  </script>
+  /* Blink effect */
+  .blink {
+    animation: blinkBg 0.5s infinite alternate;
+  }
+
+  @keyframes blinkBg {
+    from { background-color: #7c3aed; }
+    to { background-color: #ec4899; }
+  }
+</style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 relative">
+<body id="body"
+class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
 
-  <!-- Center Content -->
-  <div class="text-center space-y-6">
-    
-    <!-- Count Display -->
-    <div class="text-white text-3xl font-semibold tracking-wide drop-shadow-lg">
-      
-      <span id="countText" class="font-bold text-yellow-300">0</span>
-      times
-    </div>
-
-    <!-- Big Button -->
-    <button
-      onclick="incrementCount()"
-      class="w-48 h-48 rounded-full bg-white text-indigo-600 text-xl font-bold shadow-2xl 
-             hover:scale-110 hover:bg-indigo-100 active:scale-95 transition-all duration-300"
-    >
-      Click Me
-    </button>
-
+<!-- CENTER -->
+<div class="text-center space-y-6 px-6">
+  <div class="text-white text-3xl font-semibold drop-shadow">
+    Count:
+    <span id="countText" class="text-yellow-300 font-bold">0</span>
   </div>
 
-  <!-- Reset Button -->
   <button
-    onclick="resetCount()"
-    class="fixed bottom-6 right-6 px-5 py-3 rounded-full bg-red-500 text-white text-sm font-semibold 
-           shadow-lg hover:bg-red-600 hover:scale-105 active:scale-95 transition-all duration-300"
+    id="bigButton"
+    onclick="incrementCount()"
+    class="w-56 h-56 rounded-full bg-white text-indigo-600 font-bold shadow-2xl
+           flex items-center justify-center text-center px-4
+           transition-all duration-300 hover:scale-110 active:scale-95 break-words"
+    style="font-size: 1.5rem;"
   >
-    Reset
+    Click Me
   </button>
+</div>
+
+<!-- RESET -->
+<button onclick="resetCount()"
+class="fixed bottom-6 right-24 px-4 py-3 rounded-full bg-red-500 text-white font-semibold
+shadow-lg hover:bg-red-600 transition">
+Reset
+</button>
+
+<!-- SETTINGS -->
+<button onclick="openSettings()"
+class="fixed bottom-6 right-6 px-4 py-3 rounded-full bg-gray-800 text-white font-semibold
+shadow-lg hover:bg-gray-900 transition">
+Settings
+</button>
+
+<!-- SETTINGS MODAL -->
+<div id="settingsModal"
+class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl p-6 w-80 space-y-4">
+    <h2 class="text-xl font-bold text-center">Settings</h2>
+
+    <div>
+      <label class="text-sm font-semibold">Big Button Text</label>
+      <input id="btnTextInput" type="text"
+        class="w-full mt-1 border rounded px-3 py-2"/>
+    </div>
+
+    <div>
+      <label class="text-sm font-semibold">Target Count</label>
+      <input id="targetInput" type="number"
+        class="w-full mt-1 border rounded px-3 py-2"/>
+    </div>
+
+    <div class="flex justify-between pt-3">
+      <button onclick="closeSettings()"
+        class="px-4 py-2 rounded bg-gray-300">Cancel</button>
+      <button onclick="saveSettings()"
+        class="px-4 py-2 rounded bg-indigo-600 text-white">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let count = Number(localStorage.getItem("count")) || 0;
+let target = Number(localStorage.getItem("target")) || 108;
+let btnText = localStorage.getItem("btnText") || "Click Me";
+
+const countText = document.getElementById("countText");
+const bigButton = document.getElementById("bigButton");
+const body = document.getElementById("body");
+
+countText.innerText = count;
+bigButton.innerText = btnText;
+autoFontSize();
+
+function incrementCount() {
+  count++;
+  countText.innerText = count;
+  localStorage.setItem("count", count);
+
+  if (count >= target - 4 && count <= target) {
+    navigator.vibrate?.(200);
+    body.classList.add("blink");
+  } else {
+    body.classList.remove("blink");
+  }
+
+  if (count === target) {
+    celebrate();
+  }
+}
+
+function resetCount() {
+  count = 0;
+  countText.innerText = 0;
+  localStorage.setItem("count", 0);
+}
+
+function openSettings() {
+  document.getElementById("btnTextInput").value = btnText;
+  document.getElementById("targetInput").value = target;
+  document.getElementById("settingsModal").classList.remove("hidden");
+}
+
+function closeSettings() {
+  document.getElementById("settingsModal").classList.add("hidden");
+}
+
+function saveSettings() {
+  btnText = document.getElementById("btnTextInput").value || "Click Me";
+  target = Number(document.getElementById("targetInput").value) || target;
+
+  localStorage.setItem("btnText", btnText);
+  localStorage.setItem("target", target);
+
+  bigButton.innerText = btnText;
+  autoFontSize();
+  closeSettings();
+}
+
+function autoFontSize() {
+  let len = btnText.length;
+  if (len > 40) bigButton.style.fontSize = "0.9rem";
+  else if (len > 25) bigButton.style.fontSize = "1.1rem";
+  else bigButton.style.fontSize = "1.5rem";
+}
+
+function celebrate() {
+  for (let i = 0; i < 40; i++) {
+    const conf = document.createElement("div");
+    conf.className = "confetti";
+    conf.style.left = Math.random() * 100 + "vw";
+    conf.style.backgroundColor =
+      `hsl(${Math.random() * 360},100%,50%)`;
+    conf.style.animationDuration = (Math.random() * 2 + 2) + "s";
+    document.body.appendChild(conf);
+    setTimeout(() => conf.remove(), 3000);
+  }
+}
+</script>
 
 </body>
 </html>
