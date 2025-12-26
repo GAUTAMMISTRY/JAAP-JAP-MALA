@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Beautiful Tailwind UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    let count = 0;
+
+    function incrementCount() {
+      count++;
+      document.getElementById("countText").innerText = count;
+    }
+
+    function resetCount() {
+      count = 0;
+      document.getElementById("countText").innerText = count;
+    }
+  </script>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 relative">
+
+  <!-- Center Content -->
+  <div class="text-center space-y-6">
+    
+    <!-- Count Display -->
+    <div class="text-white text-3xl font-semibold tracking-wide drop-shadow-lg">
+      Button Clicked:
+      <span id="countText" class="font-bold text-yellow-300">0</span>
+      times
+    </div>
+
+    <!-- Big Button -->
+    <button
+      onclick="incrementCount()"
+      class="w-48 h-48 rounded-full bg-white text-indigo-600 text-xl font-bold shadow-2xl 
+             hover:scale-110 hover:bg-indigo-100 active:scale-95 transition-all duration-300"
+    >
+      Click Me
+    </button>
+
+  </div>
+
+  <!-- Reset Button -->
+  <button
+    onclick="resetCount()"
+    class="fixed bottom-6 right-6 px-5 py-3 rounded-full bg-red-500 text-white text-sm font-semibold 
+           shadow-lg hover:bg-red-600 hover:scale-105 active:scale-95 transition-all duration-300"
+  >
+    Reset
+  </button>
+
+</body>
+</html>
